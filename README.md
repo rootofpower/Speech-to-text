@@ -8,3 +8,7 @@ Speech-to-Text (STT) is a technology that converts spoken language into written 
 - Integration with various platforms and applications
 - High accuracy and low latency
 
+firstly we need to catch audio from microphone or audio file
+then we need to preprocess audio (like noise reduction, normalization, etc.)
+after that i will use whisper to convert audio to text
+finally we can postprocess text (like punctuation, capitalization, etc.)
