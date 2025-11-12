@@ -129,6 +129,49 @@ class AudioRecorder:
         
         return output_file
     
+    def record_while_active(
+        self,
+        is_active: bool,
+        output_file: Optional[str] = None
+    ) -> str:
+        """
+        Record audio while a given function returns True.
+        
+        Args:
+            is_active_func (bool): Function that returns True to continue recording.
+            output_file (Optional[str]): Path to save the recorded audio file.
+        """
+        if output_file is None:
+            output_file = "temp.wav"
+            
+        stream = self.audio_interface.open(
+            format=self.format,
+            channels=self.channels,
+            rate=self.rate,
+            input=True,
+            frames_per_buffer=self.chunk_size
+        )
+        
+        print("Recording... Speak now!")
+        frames = []
+        
+        while is_active:
+            data = stream.read(self.chunk_size)
+            frames.append(data)
+                
+        print("Recording finished.")
+        stream.stop_stream()
+        stream.close()
+        
+        wf = wave.open(output_file, 'wb')
+        wf.setnchannels(self.channels)
+        wf.setsampwidth(self.audio_interface.get_sample_size(self.format))
+        wf.setframerate(self.rate)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+        
+        return output_file
+    
     def __del__(self):
         """close PyAudio interface"""
         self.audio_interface.terminate()

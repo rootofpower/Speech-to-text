@@ -42,6 +42,7 @@ class SpeechToText:
             'language': result['language'],
             'segments': result.get('segments', [])
         }
+    
     def transcribe_from_microphone(
         self,
         duration: float = 5.0,
@@ -65,6 +66,30 @@ class SpeechToText:
             
         return result
     
+    def transcribe_while_active(
+        self,
+        is_active: bool,
+        language: Optional[str] = None,
+        cleanup: bool = True
+    ) -> Dict:
+        """
+        Record audio from microphone while a given condition is active
+        
+        Args:
+            is_active (bool): Condition to continue recording.
+            language (Optional[str], optional): Language of the audio. Defaults to None.
+            cleanup (bool, optional): Whether to delete the temporary audio file after transcription. Defaults to True.
+        """
+        temp_audio_file = self.recorder.record_while_active(
+            is_active=is_active
+        )
+        
+        result = self.transcribe_file(temp_audio_file, language=language)
+        
+        if cleanup:
+            Path(temp_audio_file).unlink(missing_ok=True)
+            
+        return result
     
     def transcribe_until_silence(
         self,
