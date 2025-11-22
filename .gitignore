@@ -42,4 +42,3 @@ audio/
 # Models
 *.pt
 models/
-.gitignore
